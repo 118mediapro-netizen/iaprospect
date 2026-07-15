@@ -92,3 +92,20 @@ Puis ouvrez **http://127.0.0.1:8000**.
   annonces dans `app/scraper.py`.
 - **Base de données** : remplacer `DATABASE_URL` dans `app/database.py` pour
   passer par exemple à PostgreSQL.
+
+## Déploiement en ligne (Render)
+
+Le fichier `render.yaml` permet un déploiement quasi automatique sur
+[Render](https://render.com) (offre gratuite) :
+
+1. S'inscrire sur Render **avec GitHub** (autorise l'accès aux dépôts).
+2. **New +** → **Blueprint** → choisir le dépôt `iaprospect`.
+3. Render lit `render.yaml` → **Apply**.
+4. Renseigner la variable `ANTHROPIC_API_KEY` lorsqu'elle est demandée.
+5. Après le build, Render fournit une adresse publique
+   (ex. `https://iaprospect.onrender.com`).
+
+> L'offre gratuite met le service en veille après 15 min d'inactivité (le
+> premier chargement suivant prend ~30 s) et le stockage est éphémère : la base
+> SQLite peut se réinitialiser à un redéploiement. Pour des données durables,
+> brancher une base PostgreSQL (Render Postgres, Neon, Supabase…) via `DATABASE_URL`.

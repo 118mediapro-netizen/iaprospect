@@ -1,0 +1,26 @@
+# ── Déploiement Render (Blueprint) ──────────────────────────────────────────
+# Doc : https://render.com/docs/blueprint-spec
+#
+# Ce fichier permet un déploiement quasi automatique sur Render :
+# Render lit la configuration ci-dessous, installe les dépendances et démarre
+# le serveur. Il ne reste qu'à renseigner la clé API ANTHROPIC_API_KEY.
+services:
+  - type: web
+    name: iaprospect
+    runtime: python
+    plan: free
+    branch: claude/prospecting-saas-platform-xlfo8u
+    # Installation des dépendances Python
+    buildCommand: pip install -r requirements.txt
+    # Démarrage du serveur : Render fournit le port via la variable $PORT
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    # Route de vérification de santé (déjà présente dans l'application)
+    healthCheckPath: /health
+    envVars:
+      # Version de Python utilisée par Render
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      # Clé API Anthropic — « sync: false » : Render la demandera lors du
+      # déploiement (elle n'est donc jamais stockée dans le dépôt Git).
+      - key: ANTHROPIC_API_KEY
+        sync: false
