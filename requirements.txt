@@ -1,0 +1,21 @@
+# ── IAProspect — dépendances ────────────────────────────────────────────────
+# Serveur web et API
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9      # nécessaire pour lire les formulaires HTML (Form)
+
+# Templates HTML
+jinja2>=3.1
+
+# Base de données
+SQLAlchemy>=2.0
+
+# Moteur de recherche / scraper
+requests>=2.31
+beautifulsoup4>=4.12
+
+# Agent IA (SDK officiel Anthropic)
+anthropic>=0.40
+
+# Confort : chargement automatique d'un fichier .env (clé API)
+python-dotenv>=1.0

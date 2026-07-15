@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}IAProspect — Critères de recherche{% endblock %}
+
+{% block content %}
+<div class="hero p-4 p-md-5 mb-4">
+  <div class="row align-items-center">
+    <div class="col-md-8">
+      <h1 class="h3 fw-bold mb-2">Trouvez vos prochains chantiers, automatiquement.</h1>
+      <p class="mb-0 opacity-75">
+        Définissez vos critères (métier, ville, mots-clés). IAProspect explore les
+        annonces, puis Claude les filtre et rédige un message d'approche pour chaque
+        opportunité pertinente. 100 % adaptable à votre secteur.
+      </p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+      <i class="bi bi-bullseye" style="font-size:4rem; opacity:.35"></i>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Formulaire d'ajout de critères -->
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-body p-4">
+        <h2 class="h5 fw-bold mb-3"><i class="bi bi-plus-circle brand-accent"></i> Nouveau critère</h2>
+        <form action="/criteres" method="post">
+          <div class="mb-3">
+            <label class="form-label">Métier / activité</label>
+            <input name="metier" class="form-control" required
+                   placeholder="ex. maçon, développeur web, plombier…">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Ville / secteur géographique</label>
+            <input name="ville" class="form-control" required
+                   placeholder="ex. Bordeaux">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mots-clés à inclure <span class="text-muted">(optionnel)</span></label>
+            <input name="mots_cles_inclus" class="form-control"
+                   placeholder="ex. rénovation, urgent, devis">
+            <div class="form-text">Séparés par des virgules.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mots-clés à exclure <span class="text-muted">(optionnel)</span></label>
+            <input name="mots_cles_exclus" class="form-control"
+                   placeholder="ex. bénévole, stage, gratuit">
+            <div class="form-text">Séparés par des virgules.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Votre e-mail</label>
+            <input name="email" type="email" class="form-control" value="{{ email_defaut }}">
+          </div>
+          <button type="submit" class="btn btn-brand w-100">
+            <i class="bi bi-save"></i> Enregistrer le critère
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des critères existants -->
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-body p-4">
+        <h2 class="h5 fw-bold mb-3"><i class="bi bi-list-check brand-accent"></i> Mes critères</h2>
+
+        {% if criteres %}
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr class="text-muted small">
+                <th>Métier</th><th>Ville</th><th>Mots-clés</th><th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in criteres %}
+              <tr>
+                <td class="fw-semibold">{{ c.metier }}</td>
+                <td>{{ c.ville }}</td>
+                <td>
+                  {% for kw in c.mots_cles_inclus.split(',') if kw.strip() %}
+                    <span class="badge text-bg-success kw-badge">+ {{ kw.strip() }}</span>
+                  {% endfor %}
+                  {% for kw in c.mots_cles_exclus.split(',') if kw.strip() %}
+                    <span class="badge text-bg-danger kw-badge">− {{ kw.strip() }}</span>
+                  {% endfor %}
+                  {% if not c.mots_cles_inclus.strip() and not c.mots_cles_exclus.strip() %}
+                    <span class="text-muted small">—</span>
+                  {% endif %}
+                </td>
+                <td class="text-end text-nowrap">
+                  <form action="/criteres/{{ c.id }}/lancer" method="post" class="d-inline">
+                    <button class="btn btn-sm btn-brand" title="Lancer la prospection">
+                      <i class="bi bi-play-fill"></i> Lancer
+                    </button>
+                  </form>
+                  <form action="/criteres/{{ c.id }}/supprimer" method="post" class="d-inline"
+                        onsubmit="return confirm('Supprimer ce critère et ses opportunités ?');">
+                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-5">
+          <i class="bi bi-inbox" style="font-size:2.5rem"></i>
+          <p class="mt-2 mb-0">Aucun critère pour l'instant. Créez-en un pour commencer.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Base de données SQLite locale
+*.db
+*.sqlite3
+
+# Secrets / configuration locale
+.env
+
+# Divers
+.DS_Store
+.idea/
+.vscode/

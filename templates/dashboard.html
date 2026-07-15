@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}IAProspect — Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+  <div>
+    <h1 class="h4 fw-bold mb-1"><i class="bi bi-grid-1x2 brand-accent"></i> Tableau de bord</h1>
+    <p class="text-muted mb-0">Opportunités détectées, triées par pertinence.</p>
+  </div>
+  <div class="d-flex align-items-center gap-3">
+    <div class="text-end">
+      <div class="fw-bold h5 mb-0">{{ nb_pertinents }} / {{ nb_total }}</div>
+      <div class="text-muted small">opportunités pertinentes</div>
+    </div>
+    {% if leads %}
+    <form action="/leads/vider" method="post"
+          onsubmit="return confirm('Vider toutes les opportunités ?');">
+      <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Vider</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{% if leads %}
+<div class="row g-3">
+  {% for lead in leads %}
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+          <div>
+            <h2 class="h6 fw-bold mb-1">{{ lead.titre }}</h2>
+            <div class="text-muted small">
+              <i class="bi bi-briefcase"></i> {{ lead.critere.metier }}
+              · <i class="bi bi-geo-alt"></i> {{ lead.critere.ville }}
+            </div>
+          </div>
+          {% if lead.pertinence_ia %}
+            <span class="badge text-bg-success"><i class="bi bi-check-circle"></i> Pertinent</span>
+          {% else %}
+            <span class="badge text-bg-secondary"><i class="bi bi-x-circle"></i> Non pertinent</span>
+          {% endif %}
+        </div>
+
+        {% if lead.description %}
+        <p class="mb-2">{{ lead.description }}</p>
+        {% endif %}
+
+        <p class="mb-2 small">
+          <span class="fw-semibold"><i class="bi bi-robot brand-accent"></i> Analyse IA :</span>
+          {{ lead.raison_ia }}
+        </p>
+
+        {% if lead.message_suggere %}
+        <div class="mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-semibold small"><i class="bi bi-chat-dots brand-accent"></i> Message d'approche suggéré</span>
+            <button class="btn btn-sm btn-outline-primary" onclick="copier('msg-{{ lead.id }}', this)">
+              <i class="bi bi-clipboard"></i> Copier
+            </button>
+          </div>
+          <div class="message-box" id="msg-{{ lead.id }}">{{ lead.message_suggere }}</div>
+        </div>
+        {% endif %}
+
+        {% if lead.source_url %}
+        <a href="{{ lead.source_url }}" target="_blank" rel="noopener" class="small">
+          <i class="bi bi-box-arrow-up-right"></i> Voir l'annonce source
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">
+  <div class="card-body text-center text-muted py-5">
+    <i class="bi bi-search" style="font-size:2.5rem"></i>
+    <p class="mt-2 mb-3">Aucune opportunité pour l'instant.</p>
+    <a href="/" class="btn btn-brand"><i class="bi bi-sliders"></i> Définir des critères</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Copie le message d'approche dans le presse-papiers.
+  function copier(id, bouton) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    navigator.clipboard.writeText(el.innerText).then(() => {
+      const original = bouton.innerHTML;
+      bouton.innerHTML = '<i class="bi bi-check2"></i> Copié !';
+      setTimeout(() => { bouton.innerHTML = original; }, 1500);
+    });
+  }
+</script>
+{% endblock %}

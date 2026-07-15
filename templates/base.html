@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}IAProspect{% endblock %}</title>
+
+  <!-- Bootstrap 5 + icônes (via CDN, comme demandé) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root { --brand: #4f46e5; --brand-dark: #4338ca; }
+    body { background: #f4f5fb; color: #1f2430; }
+    .navbar-brand { font-weight: 700; letter-spacing: -.02em; }
+    .brand-accent { color: var(--brand); }
+    .hero {
+      background: linear-gradient(135deg, var(--brand) 0%, #7c3aed 100%);
+      color: #fff; border-radius: 1rem;
+    }
+    .card { border: none; border-radius: 1rem; box-shadow: 0 6px 24px rgba(31, 36, 48, .06); }
+    .btn-brand { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .btn-brand:hover { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+    .message-box {
+      white-space: pre-wrap; background: #f8f9ff; border: 1px solid #e6e8f5;
+      border-radius: .75rem; padding: .85rem 1rem; font-size: .93rem;
+    }
+    .kw-badge { font-weight: 500; }
+    footer { color: #8a90a2; font-size: .85rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="bi bi-radar brand-accent"></i> IA<span class="brand-accent">Prospect</span>
+      </a>
+      <div class="ms-auto d-flex gap-2">
+        <a href="/" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-sliders"></i> Critères
+        </a>
+        <a href="/dashboard" class="btn btn-sm btn-brand">
+          <i class="bi bi-grid-1x2"></i> Tableau de bord
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    {% if not cle_api %}
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>
+        <strong>Clé API Anthropic non configurée.</strong>
+        Le scraping fonctionne, mais l'analyse IA renverra un résultat de repli.
+        Renseignez <code>ANTHROPIC_API_KEY</code> dans un fichier <code>.env</code> puis relancez le serveur.
+      </div>
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center py-4">
+    IAProspect — prototype de prospection automatisée par IA · FastAPI + SQLAlchemy + Claude
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
